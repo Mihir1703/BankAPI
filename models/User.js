@@ -1,4 +1,3 @@
-const e = require('express');
 const DBconnect = require('../database/Connection')
 
 let User = {

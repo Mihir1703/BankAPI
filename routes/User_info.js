@@ -109,7 +109,7 @@ router.post('/getuser', fetchuser, async (req, res) => {
                 return
             }
             if(username != null){
-                res.send({ success: true, user: username.fname + username.lname})
+                res.send({ success: true, user:username})
                 return
             }else{
                 res.send({success:false})

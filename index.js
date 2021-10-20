@@ -14,6 +14,7 @@ DBconnect.connect((err)=>{
 })
 
 app.use('/api/user',require('./routes/User_info'))
+app.use('/api/transaction',require('./routes/Transaction'))
 
 app.listen(config.port,()=>{
     console.log(`The server is running on http://localhost:${config.port}`);
