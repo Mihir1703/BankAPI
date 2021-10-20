@@ -31,6 +31,13 @@ router.post('/send',[
                 success:false
             })
         }else{
+            if(acc_no == racc_no){
+                res.status(status_code.StatusCodes.METHOD_NOT_ALLOWED).json({
+                    success:false,
+                    message:"self transaction not allowed"
+                })
+                return
+            }
             const passwordCompare = await bcrypt.compare(req.body.password, data.password);
             if(!passwordCompare){
                 res.status(status_code.StatusCodes.BAD_REQUEST).json({ success:false, error: "Please try to login with correct credentials" });
@@ -48,10 +55,24 @@ router.post('/send',[
                                 amount:req.body.amount
                             },(err,data)=>{
                                 if(!err){
-                                    res.status(status_code.StatusCodes.OK).json({
-                                        success:data,
-                                        message:(data == false)?"Insufficient balance":"Successfully transfered to target account"
-                                    })
+                                    if(data == true){
+                                        transaction.lastTransaction({account_no:acc_no,recievers_account_no:racc_no},(error,ids)=>{
+                                            if(!error){
+                                                res.status(status_code.StatusCodes.OK).json({
+                                                    success:data,
+                                                    message:"Successfully transfered to target account",
+                                                    transaction_id:ids
+                                                })
+                                            }
+                                            return;
+                                        })
+                                    }
+                                    else{
+                                        res.status(status_code.StatusCodes.OK).json({
+                                            success:data,
+                                            message:"Insufficient balance"
+                                        })
+                                    }
                                 }
                             })
                         }

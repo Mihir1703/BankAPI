@@ -9,7 +9,8 @@ app.use(cors())
 DBconnect.connect((err)=>{
     if(err) throw err;
     else{
-        console.log("Database connection successfull")        
+        console.log("Database connection successfull")      
+          
     }
 })
 
