@@ -13,7 +13,7 @@ DBconnect.connect((err)=>{
     }
 })
 
-app.use('/api/',require('./routes/auth'))
+app.use('/api/user',require('./routes/User_info'))
 
 app.listen(config.port,()=>{
     console.log(`The server is running on http://localhost:${config.port}`);

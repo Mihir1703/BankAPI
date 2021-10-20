@@ -34,6 +34,23 @@ let User = {
                 callback(null,data[0]);
             }
         })
+    },
+    showBalance : async ({account_no},callback)=>{
+        DBconnect.query(`select balance from user where account_no = ${account_no}`,(err,data)=>{
+            if(err) callback(err,null);
+            else{
+                if(data == null){
+                    callback(null,{
+                        not_exist:true
+                    })
+                }else{
+                    callback(null,{
+                        not_exist:false,
+                        balance:data[0].balance
+                    })
+                }
+            }
+        })
     }
 }
 

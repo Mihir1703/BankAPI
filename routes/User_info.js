@@ -5,7 +5,8 @@ const bcrypt = require('bcryptjs');
 const status_code = require('http-status-codes')
 const { body, validationResult } = require('express-validator');
 const User = require('../models/User')
-var jwt = require('jsonwebtoken');
+const jwt = require('jsonwebtoken')
+const fetchuser = require('../middleware/fetchuser')
 
 router.post('/create',[
     body('uid','Enter a valid UID').isLength({min:16,max:16}),
@@ -96,6 +97,49 @@ router.post('/login',[
             }
         }
     })
+})
+
+router.post('/getuser', fetchuser, async (req, res) => {
+
+    try {
+        account_no = req.access;
+        await User.findByAccNo({account_no},(err,username)=>{
+            if(err) {
+                res.status(status_code.StatusCodes.INTERNAL_SERVER_ERROR).send({status:false,reason:"Internal server Error"})
+                return
+            }
+            if(username != null){
+                res.send({ success: true, user: username.fname + username.lname})
+                return
+            }else{
+                res.send({success:false})
+            }
+        })
+    } catch (error) {
+        console.error(error.message);
+        res.status(status_code.StatusCodes.INTERNAL_SERVER_ERROR).send("Internal Server Error");
+    }
+})
+
+router.post('/balance',fetchuser,async (req,res)=>{
+    try {
+        account_no = req.access;
+        await User.showBalance({account_no},(err,data)=>{
+            if(err) {
+                res.status(status_code.StatusCodes.INTERNAL_SERVER_ERROR).send({status:false,reason:"Internal server Error"})
+                return
+            }
+            if(!data.not_exist){
+                res.send({ success: true, balance:data.balance})
+                return
+            }else{
+                res.send({success:false,message:"Invalid account"})
+            }
+        })
+    } catch (error) {
+        console.error(error.message);
+        res.status(status_code.StatusCodes.INTERNAL_SERVER_ERROR).send("Internal Server Error");
+    }
 })
 
 module.exports = router
